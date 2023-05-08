@@ -1,4 +1,5 @@
 <?php
+ob_start();
 $user = $_POST["email"];
 $pass = $_POST["password"];
 $servurl = "http://usuarios:3001/usuarios/$user/$pass";
@@ -36,3 +37,5 @@ if (count($resp) != 0) {
     echo $response;
     echo "response fallida";
 }
+ob_end_flush();
+?>
