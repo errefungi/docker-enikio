@@ -17,6 +17,11 @@ router.get('/postu/:id_apto', async (req, res) => {
     res.json(result);
 });
 
+router.get('/postu', async (req, res) => {
+    result = await postuModel.allPostu();
+    res.json(result);
+});
+
 router.post('/postu/crearpostulacion', async (req, res) => {
     const id_apto = req.body.id_apto;
     const cc_postulado = req.body.cc_postulado;

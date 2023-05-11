@@ -88,6 +88,3 @@ $id_apto = $_POST["id_apto"];
       </body>
 
       </html>
-
-
--->

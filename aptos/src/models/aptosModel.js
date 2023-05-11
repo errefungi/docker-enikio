@@ -1,11 +1,30 @@
 const mysql = require('mysql2/promise');
-const connection = mysql.createPool({
-    host: 'db',
-    user: 'root',
-    password: '',
-    database: 'enikio'
-});
- 
+let retries = 20;
+
+async function connect() {
+  while(retries) {
+    try {
+      const pool = mysql.createPool({
+        host: 'db',
+        user: 'root',
+        password: '',
+        database: 'enikio' 
+      });
+
+      return pool;
+    } catch (err) {
+      console.log('Error connecting to DB: ', err);
+      console.log(`Retrying (${retries} attempts left)...`);
+      retries--;
+      await new Promise(res => setTimeout(res, 5000));
+    }
+  }
+
+  throw new Error('Max retries exceeded. Could not connect to DB.');
+}
+
+const connection = connect();
+
 
 async function traerAptoArrendador(id_arrendador) {
     const result = await connection.query('SELECT * FROM aptos WHERE id_arrendador = ?', id_arrendador);
@@ -20,7 +39,7 @@ async function getAllAptos() {
 async function traerAptoMapa(hab_disponibles) {
     const result = await connection.query('SELECT * FROM aptos WHERE hab_disponibles != 0', hab_disponibles);
     return result[0];
-    }
+}
 
 async function traerApto(id_apto) {
     const result = await connection.query('SELECT * FROM aptos WHERE id_apto =?', id_apto);

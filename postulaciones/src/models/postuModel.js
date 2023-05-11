@@ -1,18 +1,43 @@
 const mysql = require('mysql2/promise');
-const connection = mysql.createPool({
-host: 'db',
-user: 'root',
-password: '',
-database: 'enikio'
-});
+let retries = 20;
+
+async function connect() {
+  while(retries) {
+    try {
+      const pool = mysql.createPool({
+        host: 'db',
+        user: 'root',
+        password: '',
+        database: 'enikio' 
+      });
+
+      return pool;
+    } catch (err) {
+      console.log('Error connecting to DB: ', err);
+      console.log(`Retrying (${retries} attempts left)...`);
+      retries--;
+      await new Promise(res => setTimeout(res, 5000));
+    }
+  }
+
+  throw new Error('Max retries exceeded. Could not connect to DB.');
+}
+
+const connection = connect();
+
 
 async function crearPostulacion(id_apto, cc_postulado, ocupacion, interes) {
-const result = await connection.query('INSERT INTO postulaciones VALUES (?, ?, Now(), ?, ?, "pendiente")', [id_apto, cc_postulado, ocupacion, interes]);
-return result;
-} 
+    const result = await connection.query('INSERT INTO postulaciones VALUES (?, ?, Now(), ?, ?, "pendiente")', [id_apto, cc_postulado, ocupacion, interes]);
+    return result;
+}
 
 async function postuPorApto(id) {
     const result = await connection.query('SELECT * FROM postulaciones WHERE id_apto = ?', id);
+    return result;
+}
+
+async function allPostu() {
+    const result = await connection.query('SELECT * FROM postulaciones');
     return result;
 }
 
@@ -27,5 +52,6 @@ async function getPostulaciones(id) {
 module.exports = {
     postuPorApto,
     crearPostulacion,
-    getPostulaciones
+    getPostulaciones,
+    allPostu
 };

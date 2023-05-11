@@ -2,18 +2,24 @@ version: "3"
 services:
   usuarios:
     image: usuarios
+    depends_on:
+      - db
     links:
       - db
     ports:
       - "3001:3001"
   aptos:
     image: aptos
+    depends_on:
+      - db
     links:
       - db
     ports:
       - "3002:3002"
   postulaciones:
     image: postulaciones
+    depends_on:
+      - db
     links:
       - db
       - usuarios
@@ -22,12 +28,18 @@ services:
       - "3003:3003"
   haproxy:
     image: haproxy
+    depends_on:
+      - microweb
     ports:
       - "80:80"
     links:
       - microweb
   microweb:
     image: microweb
+    depends_on:
+      - usuarios
+      - aptos
+      - postulaciones
     links:
       - usuarios
       - aptos
@@ -43,4 +55,3 @@ services:
     volumes:
       - "./db/data:/var/lib/mysql-files/"
       - ./db:/docker-entrypoint-initdb.d/:ro
-
