@@ -2,78 +2,89 @@ const mysql = require('mysql2/promise');
 let retries = 20;
 
 async function connect() {
-  while(retries) {
-    try {
-      const pool = mysql.createPool({
-        host: 'db',
-        user: 'root',
-        password: '',
-        database: 'enikio' 
-      });
+    while (retries) {
+        try {
+            const pool = await mysql.createPool({
+                host: 'db',
+                user: 'root',
+                password: '',
+                database: 'enikio'
+            });
 
-      return pool;
-    } catch (err) {
-      console.log('Error connecting to DB: ', err);
-      console.log(`Retrying (${retries} attempts left)...`);
-      retries--;
-      await new Promise(res => setTimeout(res, 5000));
+            return pool;
+        } catch (err) {
+            console.log('Error connecting to DB: ', err);
+            console.log(`Retrying (${retries} attempts left)...`);
+            retries--;
+            await new Promise(res => setTimeout(res, 5000));
+        }
     }
-  }
 
-  throw new Error('Max retries exceeded. Could not connect to DB.');
+    throw new Error('Max retries exceeded. Could not connect to DB.');
 }
 
-const connection = connect();
+const conn = connect();
+
 
 
 async function traerAptoArrendador(id_arrendador) {
+    const connection = await conn;
     const result = await connection.query('SELECT * FROM aptos WHERE id_arrendador = ?', id_arrendador);
     return result[0];
 }
 
 async function getAllAptos() {
+    const connection = await conn;
     const result = await connection.query('SELECT * FROM aptos WHERE coord is not NULL');
     return result[0];
 }
 
 async function traerAptoMapa(hab_disponibles) {
+    const connection = await conn;
     const result = await connection.query('SELECT * FROM aptos WHERE hab_disponibles != 0', hab_disponibles);
     return result[0];
 }
 
 async function traerApto(id_apto) {
+    const connection = await conn;
     const result = await connection.query('SELECT * FROM aptos WHERE id_apto =?', id_apto);
     return result[0];
 }
 
 async function actualizarApto(id_apto, hab_disponibles) {
+    const connection = await conn;
     const result = await connection.query('UPDATE aptos SET hab_disponibles = ? WHERE id_apto = ? ', [hab_disponibles, id_apto]);
     return result;
 }
 
 // solo admin x2 - **admin no manipula los aptos, lo haría arrendador, pero al final dijimos que no por el tema de que todo se hace con scrap en finca raiz"""""
 async function borrarApto(id_apto) {
+    const connection = await conn;
     const result = await connection.query('DELETE FROM aptos WHERE id= ?', id_apto);
     return result;
 }
 
 async function getPropiedadesArr(cc) {
+    const connection = await conn;
     const result = await connection.query('SELECT id_apto, precio, cant_h, hab_disponibles, link FROM aptos WHERE id_arrendador = ? AND coord IS NOT NULL', cc);
     return result[0];
 }
 
 async function getCoords(nombre) {
+    const connection = await conn;
     const result = await connection.query('SELECT coord from universidades where nombre = ?', nombre)
     return result[0];
 }
 
 
 async function getCloseAptos(coord) {
+    const connection = await conn;
     const result = await connection.query(`SELECT   id_apto,   precio,   cant_h, hab_disponibles, ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('${coord}')) / 1000, 2) AS distance_km, link, coord FROM   aptos WHERE ST_Distance_Sphere(coord, ST_GeomFromText('${coord}')) <= 2000 AND coord IS NOT NULL AND hab_disponibles > 0 ORDER BY distance_km ASC LIMIT 100;`)
     return result[0];
 }
 
 async function getUniversidad() {
+    const connection = await conn;
     const result = await connection.query('SELECT * from universidades')
     return result[0];
 }
@@ -90,6 +101,7 @@ async function getMetrics() {
     const aptos_san_bue = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.343562195183882 -76.54438216439318)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
     const aptos_libre = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.427567009699586 -76.54992013164862)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
     const aptos_cooperativa = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.391257975610888 -76.55105966842426)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
+    const connection = await conn;
     const resultado = {
         "num_aptos": num_aptos[0][0]["total"],
         "num_postu": num_postu[0][0]["total"],
