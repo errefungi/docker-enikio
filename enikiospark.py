@@ -1,5 +1,6 @@
 import requests
 from pyspark.sql.functions import udf, col, lit, least, when, avg
+from pyspark.sql import functions as F
 from pyspark.sql.types import FloatType, StringType
 from math import radians, sin, cos, sqrt, atan2
 from pyspark.sql import SparkSession
@@ -21,7 +22,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return round(R * c, 2)
 
 def nearest_university(*distances):
-    university_names = [" ".join(name.split("_")[2:]) for name in distance_columns]
+    university_names = ["_".join(name.split("_")[2:]) for name in distance_columns]
     min_distance_index = distances.index(min(distances))
     return university_names[min_distance_index]
 
@@ -82,24 +83,65 @@ aptosDF = aptosDF.withColumn("dist_nearest_uni", least(*distance_columns))
 for col in distance_columns:
     aptosDF = aptosDF.drop(col)
 
-# Añadir la columna de rango de precio
+# Calcular el primer cuartil y el promedio de los precios
 primer_cuartil = aptosDF.approxQuantile("precio", [0.25], 0)[0]
-promedio = aptosDF.agg(avg(col("precio"))).collect()[0][0]
+segundo_cuartil = aptosDF.approxQuantile("precio", [0.50], 0)[0]
+tercer_cuartil = aptosDF.approxQuantile("precio", [0.75], 0)[0]
+promedio = aptosDF.agg(F.avg(F.col("precio"))).collect()[0][0]
 
-
+# Añadir la columna de rango de precio
 aptosDF = aptosDF.withColumn(
     "rango_precio",
-    when(col("precio") < primer_cuartil, "economico")
-    .when((col("precio") >= promedio - 10000) & (col("precio") <= promedio + 10000), "medio")
+    F.when(F.col("precio") < primer_cuartil, "economico")
+    .when((F.col("precio") > primer_cuartil) & (F.col("precio") < tercer_cuartil), "medio")
     .otherwise("costoso")
 )
 
+# CREAMOS LAS VISTAS PARA PRECIO DE APTO POR UNIVERSIDAD Y NUM APTOS POR UNIVERSIDAD
+promedio_precio_universidad = aptosDF.groupBy("nearest_university").agg(F.avg("precio").alias("promedio_precio"))
+num_aptos_universidad = aptosDF.groupBy("nearest_university").agg(F.count("id_apto").alias("num_aptos"))
+
+# AÑADIMOS LAS COLUMNAS AL DF DE UNIVERSIDADES
+# Unir los dos DataFrames en uno solo
+universidad_stats = promedio_precio_universidad.join(num_aptos_universidad, "nearest_university")
+uniDF = uniDF.join(universidad_stats, uniDF.nombre == universidad_stats.nearest_university)
+# REDONDEAR EL PRECIO
+uniDF = uniDF.withColumn("promedio_precio", F.round(uniDF.promedio_precio, 1))
+
+
+# HALLAR NUMERO DE POSTULACIONES X RANGO DE PRECIO y X UNIVERSIDAD
+joinedDF = aptosDF.join(postulacionesDF, aptosDF.id_apto == postulacionesDF.id_apto)
+joinedDF = joinedDF.drop(postulacionesDF.id_apto)
+POSTULACIONES_x_PRECIO = joinedDF.groupBy("rango_precio").agg(F.count("id_apto").alias("num_postulaciones_X_precio"))
+POSTULACIONES_x_PRECIO = POSTULACIONES_x_PRECIO.withColumn("num_postulaciones_X_precio", \
+                                                           F.round(POSTULACIONES_x_PRECIO.num_postulaciones_X_precio, 1))
+POSTULACIONES_x_UNIVERSIDAD = joinedDF.groupBy("nearest_university").agg(F.count("id_apto").alias("num_postulaciones_X_universidad"))
+
+# HALLAR NUMERO DE HABITACIONES POR RANGO DE PRECIO Y UNIVERSIDAD
+HABITACIONES_x_PRECIO = aptosDF.groupBy("rango_precio").agg(avg("cant_h").alias("promedio_habitacion_X_rango_precio"))
+HABITACIONES_x_PRECIO = HABITACIONES_x_PRECIO.withColumn("promedio_habitacion_X_rango_precio",\
+                                                          F.round(HABITACIONES_x_PRECIO.promedio_habitacion_X_rango_precio, 1))
+HABITACIONES_x_UNIVERSIDAD = aptosDF.groupBy("nearest_university").agg(avg("cant_h").alias("promedio_habitacion_X_universidad"))
+HABITACIONES_x_UNIVERSIDAD = HABITACIONES_x_UNIVERSIDAD.withColumn("promedio_habitacion_X_universidad",\
+                                                          F.round(HABITACIONES_x_UNIVERSIDAD.promedio_habitacion_X_universidad, 1))
 # print("Total por ocupación")
 # result.show(10)
 # print("\n"*2)
-print("Aptos")
-aptosDF.show(5)
+# print("Aptos")
+# aptosDF.show(5)
 # print("\n"*2)
 # print("Universidades")
 # uniDF.show()
-# spark.stop()
+
+print("Num postu x RANGO DE PRECIO")
+POSTULACIONES_x_PRECIO.show()
+print("\n"*2)
+print("Num habitaciones x RANGO DE PRECIO")
+HABITACIONES_x_PRECIO.show()
+print("\n"*2)
+print("Num postu x CERCANIA A UNIVERSIDAD")
+POSTULACIONES_x_UNIVERSIDAD.show()
+print("\n"*2)
+print("Num habitaciones x CERCANIA A UNIVERSIDAD")
+HABITACIONES_x_UNIVERSIDAD.show()
+spark.stop()
