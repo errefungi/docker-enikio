@@ -1,3 +1,48 @@
+<?php
+ob_start();
+// Aquí irá el código PHP para obtener los usuarios y realizar acciones de eliminar y crear usuarios.
+session_start();
+$nombre = $_SESSION["nombre"];
+$us = $_SESSION["usuario"];
+$rol = $_SESSION["rol"];
+$cc = $_SESSION["cc"];
+if ($rol == "") {
+    header("Location: index.html");
+}
+$url = "http://usuarios:3001/usuarios";
+$curl = curl_init($url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+$response = curl_exec($curl);
+curl_close($curl);
+$resp = json_decode($response);
+if ($response === false) {
+    // header("Location:index.html");
+    echo "No hay nada en la response";
+}
+$metricsUrl = "http://aptos:3002/metrics";
+$metricsCurl = curl_init($metricsUrl);
+curl_setopt($metricsCurl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($metricsCurl, CURLOPT_CUSTOMREQUEST, "GET");
+$metricsResponse = curl_exec($metricsCurl);
+curl_close($metricsCurl);
+$metricsResp = json_decode($metricsResponse);
+if ($metricsResponse === false) {
+    // header("Location:index.html");
+    echo "No hay nada en la response";
+}
+$num_aptos = $metricsResp->num_aptos;
+$num_postu = $metricsResp->num_postu;
+$aptos_icesi = $metricsResp->aptos_icesi;
+$aptos_over_2_hab_dispo = $metricsResp->aptos_over_2_hab_dispo;
+$aptos_uao = $metricsResp->aptos_uao;
+$aptos_antonio_jose = $metricsResp->aptos_antonio_jose;
+$aptos_san_bue = $metricsResp->aptos_san_bue;
+$aptos_libre = $metricsResp->aptos_libre;
+$aptos_cooperativa = $metricsResp->aptos_cooperativa;
+$usuarios = $metricsResp->arrendadores;
+ob_end_flush();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,49 +57,6 @@
 </head>
 
 <body>
-    <?php
-    // Aquí irá el código PHP para obtener los usuarios y realizar acciones de eliminar y crear usuarios.
-    session_start();
-    $nombre = $_SESSION["nombre"];
-    $us = $_SESSION["usuario"];
-    $rol = $_SESSION["rol"];
-    $cc = $_SESSION["cc"];
-    if ($rol == "") {
-        header("Location: index.html");
-    }
-    $url = "http://usuarios:3001/usuarios";
-    $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-    $response = curl_exec($curl);
-    curl_close($curl);
-    $resp = json_decode($response);
-    if ($response === false) {
-        // header("Location:index.html");
-        echo "No hay nada en la response";
-    }
-    $metricsUrl = "http://aptos:3002/metrics";
-    $metricsCurl = curl_init($metricsUrl);
-    curl_setopt($metricsCurl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($metricsCurl, CURLOPT_CUSTOMREQUEST, "GET");
-    $metricsResponse = curl_exec($metricsCurl);
-    curl_close($metricsCurl);
-    $metricsResp = json_decode($metricsResponse);
-    if ($metricsResponse === false) {
-        // header("Location:index.html");
-        echo "No hay nada en la response";
-    }
-    $num_aptos = $metricsResp->num_aptos;
-    $num_postu = $metricsResp->num_postu;
-    $aptos_icesi = $metricsResp->aptos_icesi;
-    $aptos_over_2_hab_dispo = $metricsResp->aptos_over_2_hab_dispo;
-    $aptos_uao = $metricsResp->aptos_uao;
-    $aptos_antonio_jose = $metricsResp->aptos_antonio_jose;
-    $aptos_san_bue = $metricsResp->aptos_san_bue;
-    $aptos_libre = $metricsResp->aptos_libre;
-    $aptos_cooperativa = $metricsResp->aptos_cooperativa;
-    $usuarios = $metricsResp->arrendadores;
-    ?>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-white" id="sidebar-wrapper">

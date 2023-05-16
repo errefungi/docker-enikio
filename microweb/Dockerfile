@@ -1,2 +1,2 @@
-FROM php:8.2.5RC1-apache-buster
+FROM php:7.4-apache
 COPY . /var/www/html

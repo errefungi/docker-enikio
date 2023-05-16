@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 $nombre = $_SESSION["nombre"];
 $universidad = $_GET["comp_select"];
@@ -30,8 +31,8 @@ $result = curl_exec($ch);
 // cierra la sesión de curl
 curl_close($ch);
 
-$resp = json_decode($result)
-
+$resp = json_decode($result);
+ob_end_flush();
 ?>
 
 <!DOCTYPE html>
@@ -90,6 +91,7 @@ $resp = json_decode($result)
                                 </thead>
                                 <tbody>
                                     <?php
+                                    ob_start();
                                     $long = count($resp);
                                     for ($i = 0; $i < $long; $i++) {
                                         $dec = $resp[$i];
@@ -98,6 +100,7 @@ $resp = json_decode($result)
                                         $cant_h = $dec->cant_h;
                                         $distancia = $dec->distance_km;
                                         $link = $dec->link;
+                                    ob_end_flush();
                                     ?>
                                         <tr>
                                             <td><?php echo ($id_apto); ?></td>

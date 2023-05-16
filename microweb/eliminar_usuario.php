@@ -1,4 +1,5 @@
 <?php
+ob_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cc = $_POST["cc"];
 
@@ -14,3 +15,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Redirige a la página de administración de usuarios
     header("Location: usuariosadmin.php");
 }
+ob_end_flush();
+?>

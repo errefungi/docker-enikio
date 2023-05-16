@@ -91,6 +91,7 @@ async function getUniversidad() {
 
 
 async function getMetrics() {
+    const connection = await conn;
     const num_aptos = await connection.query('select count(*) as total from aptos')
     const num_postu = await connection.query('select count(*) as total from postulaciones')
     const hab_dispo = await connection.query('select count(*) as total from aptos WHERE hab_disponibles > 2')
@@ -101,7 +102,6 @@ async function getMetrics() {
     const aptos_san_bue = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.343562195183882 -76.54438216439318)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
     const aptos_libre = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.427567009699586 -76.54992013164862)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
     const aptos_cooperativa = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.391257975610888 -76.55105966842426)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
-    const connection = await conn;
     const resultado = {
         "num_aptos": num_aptos[0][0]["total"],
         "num_postu": num_postu[0][0]["total"],

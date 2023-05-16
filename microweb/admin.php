@@ -1,3 +1,37 @@
+<?php
+ob_start();
+session_start();
+$nombre = $_SESSION["nombre"];
+$us = $_SESSION["usuario"];
+$rol = $_SESSION["rol"];
+$cc = $_SESSION["cc"];
+if ($rol == "") {
+    header("Location: index.html");
+}
+$metricsUrl = "http://aptos:3002/metrics";
+$metricsCurl = curl_init($metricsUrl);
+curl_setopt($metricsCurl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($metricsCurl, CURLOPT_CUSTOMREQUEST, "GET");
+$metricsResponse = curl_exec($metricsCurl);
+curl_close($metricsCurl);
+$metricsResp = json_decode($metricsResponse);
+if ($metricsResponse === false) {
+    // header("Location:index.html");
+    echo "No hay nada en la response";
+}
+$num_aptos = $metricsResp->num_aptos;
+$num_postu = $metricsResp->num_postu;
+$aptos_icesi = $metricsResp->aptos_icesi;
+$aptos_over_2_hab_dispo = $metricsResp->aptos_over_2_hab_dispo;
+$aptos_uao = $metricsResp->aptos_uao;
+$aptos_antonio_jose = $metricsResp->aptos_antonio_jose;
+$aptos_san_bue = $metricsResp->aptos_san_bue;
+$aptos_libre = $metricsResp->aptos_libre;
+$aptos_cooperativa = $metricsResp->aptos_cooperativa;
+$usuarios = $metricsResp->arrendadores;
+ob_end_flush();
+?>
+
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -9,38 +43,6 @@
 </head>
 
 <body>
-    <?php
-    session_start();
-    $nombre = $_SESSION["nombre"];
-    $us = $_SESSION["usuario"];
-    $rol = $_SESSION["rol"];
-    $cc = $_SESSION["cc"];
-    if ($rol == "") {
-        header("Location: index.html");
-    }
-    $metricsUrl = "http://aptos:3002/metrics";
-    $metricsCurl = curl_init($metricsUrl);
-    curl_setopt($metricsCurl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($metricsCurl, CURLOPT_CUSTOMREQUEST, "GET");
-    $metricsResponse = curl_exec($metricsCurl);
-    curl_close($metricsCurl);
-    $metricsResp = json_decode($metricsResponse);
-    if ($metricsResponse === false) {
-        // header("Location:index.html");
-        echo "No hay nada en la response";
-    }
-    $num_aptos = $metricsResp->num_aptos;
-    $num_postu = $metricsResp->num_postu;
-    $aptos_icesi = $metricsResp->aptos_icesi;
-    $aptos_over_2_hab_dispo = $metricsResp->aptos_over_2_hab_dispo;
-    $aptos_uao = $metricsResp->aptos_uao;
-    $aptos_antonio_jose = $metricsResp->aptos_antonio_jose;
-    $aptos_san_bue = $metricsResp->aptos_san_bue;
-    $aptos_libre = $metricsResp->aptos_libre;
-    $aptos_cooperativa = $metricsResp->aptos_cooperativa;
-    $usuarios = $metricsResp->arrendadores;
-
-    ?>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-white" id="sidebar-wrapper">
@@ -140,6 +142,7 @@
                                 </thead>
                                 <tbody>
                                     <?php
+                                    ob_start();
                                     $servurl = "http://aptos:3002/apartamentos";
                                     $curl = curl_init($servurl);
                                     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -158,6 +161,7 @@
                                         $cant_h = $dec->cant_h;
                                         $hab_disponibles = $dec->hab_disponibles;
                                         $link = $dec->link;
+                                        ob_end_flush();
                                     ?>
                                         <tr>
                                             <th scope="row"><?php echo ($i); ?></th>

@@ -1,9 +1,10 @@
 <?php
+ob_start();
 // session_start();
 // $us = $_SESSION["usuario"];
 // if ($us == "") {
 //     header("Location: index.html");
-// } 192.168.100.2
+//}192.168.100.9
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($_POST as $name => $value) {
@@ -33,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
                 if ($http_status == 200) {
-                    echo '<script>alert("Se actualizo exitosamente el inventario!")</script>';
                     header("Location: arrendador.php");
                 } else {
                     echo "Hubo un error al crear tu orden, intentalo de nuevo" . $http_status;
@@ -44,3 +44,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+ob_end_flush();

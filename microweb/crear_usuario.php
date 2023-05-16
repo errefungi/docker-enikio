@@ -1,4 +1,5 @@
 <?php
+ob_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cc = $_POST["cc"];
     $nombre = $_POST["nombre"];
@@ -30,13 +31,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $response = curl_exec($curl);
     curl_close($curl);
 
-    if ($response === false) {
-        echo "Hubo un error";
+    if ($response !== false) {
+        header("Location: usuariosadmin.php");
     } else {
         // Aquí puedes manejar el caso en que la petición haya sido exitosa
         // Redirige a la página que desees mostrar después de crear el usuario
-        header("Location: usuariosadmin.php");
+        echo "Hubo un error";
     }
 }
+ob_end_flush();
 ?>
 }

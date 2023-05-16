@@ -1,5 +1,5 @@
 <?php 
-
+ob_start();
 
 
 function postData($url, $data) {
@@ -39,7 +39,7 @@ $response1= postData($url1, $data1);
 
 
 // Segunda ruta
-$url2 = "http://usuarios:3003/postu/crearpostulacion";
+$url2 = "http://postulaciones:3003/postu/crearpostulacion";
 $data2 = array(
     "id_apto" => $id_apto,
     "cc_postulado" => $cedula,
@@ -48,7 +48,8 @@ $data2 = array(
 );
 $response2 = postData($url2, $data2);
 
-header("Location:universidades2.php")
+header("Location:universidades2.php");
 
 // ... Código restante
+ob_end_flush();
 ?>

@@ -1,3 +1,14 @@
+<?php
+session_start();
+$nombre = $_SESSION["nombre"];
+$us = $_SESSION["usuario"];
+$rol = $_SESSION["rol"];
+$id_apto = $_GET["id_apto"];
+if ($rol == "") {
+	header("Location: index.html");
+	exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,16 +28,6 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="a
 </head>
 
 <body>
-    <?php
-    session_start();
-    $nombre = $_SESSION["nombre"];
-    $us = $_SESSION["usuario"];
-    $rol = $_SESSION["rol"];
-    $id_apto = $_GET["id_apto"];
-    if ($rol == "") {
-        header("Location: index.html");
-    }
-    ?>
     <nav class="navbar navbar-expand-lg custom-nav">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html">ENIKIO</a>
@@ -63,7 +64,8 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="a
             </tr>
         </thead>
         <tbody>
-            <?php
+	<?php
+	    header('Content-Type: text/html; charset=utf-8');
             $servurl = "http://postulaciones:3003/postu/aptos/$id_apto";
             $curl = curl_init($servurl);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -83,7 +85,7 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="a
                 $cc_postulado = $dec->cc_postulado;
                 $fecha = $dec->fecha;
                 $ocupacion = $dec->ocupacion;
-                $interes = $dec->interes;
+		$interes = $dec->interes;
                 $estado = $dec->estado;
             ?>
                 <tr>

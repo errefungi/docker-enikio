@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 $nombre = $_SESSION["nombre"];
 $universidad = $_GET["comp_select"];
@@ -30,8 +31,8 @@ $result = curl_exec($ch);
 // cierra la sesión de curl
 curl_close($ch);
 
-$resp = json_decode($result)
-
+$resp = json_decode($result);
+ob_end_flush();
 ?>
 
 <!DOCTYPE html>

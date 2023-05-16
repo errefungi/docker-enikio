@@ -1,3 +1,15 @@
+<?php
+ob_start();
+    session_start();
+    $nombre = $_SESSION["nombre"];
+    $us = $_SESSION["usuario"];
+    $rol = $_SESSION["rol"];
+    $cc = $_SESSION["cc"];
+    if ($rol == "") {
+        header("Location: index.html");
+    }
+ob_end_flush();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,16 +29,6 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="a
 </head>
 
 <body>
-    <?php
-    session_start();
-    $nombre = $_SESSION["nombre"];
-    $us = $_SESSION["usuario"];
-    $rol = $_SESSION["rol"];
-    $cc = $_SESSION["cc"];
-    if ($rol == "") {
-        header("Location: index.html");
-    }
-    ?>
     <nav class="navbar navbar-expand-lg custom-nav">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.html">ENIKIO</a>
