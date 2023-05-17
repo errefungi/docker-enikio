@@ -5,6 +5,7 @@ from pyspark.sql.types import FloatType, StringType
 from math import radians, sin, cos, sqrt, atan2
 from pyspark.sql import SparkSession
 import json
+import sys
 
 spark = SparkSession.builder.appName("Enikio EDA").getOrCreate()
 
@@ -129,7 +130,17 @@ aptos_precioDF = POSTULACIONES_x_PRECIO.join(HABITACIONES_x_PRECIO, "rango_preci
 uni_dataDF = POSTULACIONES_x_UNIVERSIDAD.join(HABITACIONES_x_UNIVERSIDAD, "nearest_university")
 uni_dataDF= uni_dataDF.withColumnRenamed("nearest_university", "nombre")
 uniDF = uniDF.join(uni_dataDF, "nombre")
+uniDF = uniDF.withColumn("coord", F.concat(lit("POINT("), 
+                                         uniDF["lat"], 
+                                         lit(" "), 
+                                         uniDF["lon"], 
+                                         lit(")")))
 
+
+
+uniDF = uniDF.drop("lat")
+uniDF = uniDF.drop("lon")
+uniDF = uniDF.drop("nearest_university")
 print("Total por ocupación")
 ocupacionCount.show()
 
@@ -141,9 +152,15 @@ print("\n"*2)
 print("Rangos de precio de aptos")
 aptos_precioDF.show()
 
+
+# CONVERTIMOS A PANDAS PARA GRABAR COMO CSV
+ocupacionCount_pandas = ocupacionCount.toPandas()
+uniDF_pandas = uniDF.toPandas()
+aptos_precioDF_pandas = aptos_precioDF.toPandas()
+
 print("\n"*2)
-ocupacionCount.write.csv('./db/data/ocupacionCount.csv', header=True, mode='overwrite')
-uniDF.write.csv('./db/data/universidades.csv', header=True, mode='overwrite')
-aptos_precioDF.write.csv('./db/data/rangosPrecio.csv', header=True, mode='overwrite')
+ocupacionCount_pandas.to_csv(f'{sys.argv[1]}/ocupacionCount.csv', index=False)
+uniDF_pandas.to_csv(f'{sys.argv[1]}/universidades.csv', index=False)
+aptos_precioDF_pandas.to_csv(f'{sys.argv[1]}/aptosPrecio.csv', index=False)
 print("Se escribieron exitosamente los archivos.")
 spark.stop()

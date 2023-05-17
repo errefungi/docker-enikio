@@ -1,7 +1,7 @@
-﻿nombre;coord
-Universidad_Autonoma_de_Occidente;POINT(3.353740400019329 -76.52048592608172)
-Universidad_ICESI;POINT(3.3416907213039626 -76.53094179612705)
-Institucion_universitaria_Antonio_Jose_Camacho;POINT(3.470593445052489 -76.52747705971524)
-Universidad_de_San_Buenaventura_Cali;POINT(3.343562195183882 -76.54438216439318)
-Universidad_Libre_(Sede_San_Fernando);POINT(3.427567009699586 -76.54992013164862)
-Universidad_Cooperativa_de_Colombia;POINT(3.391257975610888 -76.55105966842426)
+nombre,coord,avg_precio_apto,num_aptos,num_postulaciones_X_universidad,promedio_habitacion_X_universidad
+Institucion_universitaria_Antonio_Jose_Camacho,POINT(3.4705935 -76.52747),2745677.9,312,13619,2.7
+Universidad_Autonoma_de_Occidente,POINT(3.3537405 -76.520485),1736348.7,195,8483,2.5
+Universidad_Cooperativa_de_Colombia,POINT(3.391258 -76.551056),1580615.3,107,4596,2.7
+Universidad_ICESI,POINT(3.3416908 -76.530945),3259833.3,21,900,2.4
+Universidad_Libre_(Sede_San_Fernando),POINT(3.427567 -76.54992),6896942.1,259,11143,2.7
+Universidad_de_San_Buenaventura_Cali,POINT(3.3435621 -76.54438),3973071.4,28,1259,3.0

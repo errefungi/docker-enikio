@@ -30,8 +30,23 @@ CREATE TABLE postulaciones(
         estado varchar(20));
 
 CREATE TABLE universidades(
-        nombre varchar(50),
-        coord point);
+        nombre varchar(100),
+        coord point,
+        avg_precio_apto float,
+        num_aptos int,
+        num_postulaciones_X_universidad int,
+        promedio_habitacion_X_universidad float);
+
+CREATE TABLE aptosPrecio(
+        rango_precio varchar(50),
+        num_postulaciones_X_precio int,
+        promedio_habitacion_X_rango_precio float);
+
+CREATE TABLE ocupacion(
+        ocupacion varchar(50),
+        count int);
+
+
 
 LOAD DATA INFILE '/var/lib/mysql-files/usuarios.csv'
 INTO TABLE usuarios
@@ -60,9 +75,25 @@ SET fecha = STR_TO_DATE(@fecha, '%Y-%m-%d');
 
 LOAD DATA INFILE '/var/lib/mysql-files/universidades.csv'
 INTO TABLE universidades
-FIELDS TERMINATED BY ';'
+FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(nombre, @coord)
+(nombre, @coord, avg_precio_apto, num_aptos, num_postulaciones_X_universidad, promedio_habitacion_X_universidad)
 SET coord = ST_PointFromText(@coord);
+
+LOAD DATA INFILE '/var/lib/mysql-files/aptosPrecio.csv'
+INTO TABLE aptosPrecio
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+-- (rango_precio, num_postulaciones_X_precio, promedio_habitacion_X_rango_precio)
+IGNORE 1 ROWS;
+
+LOAD DATA INFILE '/var/lib/mysql-files/ocupacionCount.csv'
+INTO TABLE ocupacion
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+-- (ocupacion, count)
+IGNORE 1 ROWS;
