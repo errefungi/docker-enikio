@@ -29,6 +29,18 @@ $aptos_san_bue = $metricsResp->aptos_san_bue;
 $aptos_libre = $metricsResp->aptos_libre;
 $aptos_cooperativa = $metricsResp->aptos_cooperativa;
 $usuarios = $metricsResp->arrendadores;
+$promedio_apto = $metricsResp-> aptos_cooperativa;
+$aptos_cooperativa = $metricsResp-> promedio_apto;
+$universidad_barata = $metricsResp-> universidad_barata;
+$universidad_cara = $metricsResp-> universidad_cara;
+$post_student = $metricsResp-> post_student;
+$post_profe = $metricsResp-> post_profe;
+$postu_barato = $metricsResp-> postu_barato;
+$postu_medio = $metricsResp-> postu_medio;
+$postu_caro = $metricsResp-> postu_caro;
+$habitacion_barato = $metricsResp-> habitacion_barato;
+$habitacion_medio = $metricsResp-> habitacion_medio;
+$habitacion_caro = $metricsResp-> habitacion_caro;
 ob_end_flush();
 ?>
 
@@ -51,6 +63,7 @@ ob_end_flush();
                 <a href="admin.php" class="list-group-item list-group-item-action bg-transparent second-text fw-bold active"><i class="fas fa-project-diagram me-2" style="color: #10c671;"></i>Dashboard</a>
                 <a href="universidadesadmin.php" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-university me-2" style="color: #10c671;"></i>Ver apartamentos</a>
                 <a href="usuariosadmin.php" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-user me-2" style="color: #10c671;"></i>Administrar usuarios</a>
+                <a href="analisisadmin.php" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-user me-2" style="color: #10c671;"></i>Analisis ENIKIO</a>
                 <a href="login.html" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i class="fas fa-power-off me-2"></i>Logout</a>
             </div>
         </div>

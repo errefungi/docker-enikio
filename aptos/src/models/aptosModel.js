@@ -102,6 +102,18 @@ async function getMetrics() {
     const aptos_san_bue = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.343562195183882 -76.54438216439318)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
     const aptos_libre = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.427567009699586 -76.54992013164862)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
     const aptos_cooperativa = await connection.query("SELECT count(*) as total FROM   aptos WHERE   ROUND(ST_Distance_Sphere(coord, ST_GeomFromText('POINT(3.391257975610888 -76.55105966842426)'))) / 1000 <= 2 AND coord IS NOT NULL AND hab_disponibles > 0")
+    // CONSULTAS HECHAS A LOS DATOS EXTRAIDOS DE PYSPARK
+    const promedio_apto = await connection.query("SELECT ROUND(AVG(avg_precio_apto), 1) AS total FROM universidades;")
+    const universidad_barata = await connection.query("SELECT nombre, ROUND(avg_precio_apto, 1) AS Minimo_Precio_Apto FROM universidades WHERE avg_precio_apto = (SELECT MIN(avg_precio_apto) FROM universidades);")
+    const universidad_cara = await connection.query("SELECT nombre, ROUND(avg_precio_apto, 1) AS Minimo_Precio_Apto FROM universidades WHERE avg_precio_apto = (SELECT MAX(avg_precio_apto) FROM universidades);")
+    const post_student = await connection.query("SELECT count as total FROM ocupacion WHERE ocupacion='Estudiante';")
+    const post_profe = await connection.query("SELECT count as total FROM ocupacion WHERE ocupacion='Docente';")
+    const postu_barato = await connection.query("SELECT num_postulaciones_X_precio as total FROM aptosPrecio WHERE rango_precio = 'economico';")
+    const postu_medio = await connection.query("SELECT num_postulaciones_X_precio as total FROM aptosPrecio WHERE rango_precio = 'medio';")
+    const postu_caro = await connection.query("SELECT num_postulaciones_X_precio as total FROM aptosPrecio WHERE rango_precio = 'costoso';")
+    const habitacion_barato = await connection.query("SELECT promedio_habitacion_X_rango_precio as total FROM aptosPrecio WHERE rango_precio = 'economico';")
+    const habitacion_medio = await connection.query("SELECT promedio_habitacion_X_rango_precio as total FROM aptosPrecio WHERE rango_precio = 'medio';")
+    const habitacion_caro = await connection.query("SELECT promedio_habitacion_X_rango_precio as total FROM aptosPrecio WHERE rango_precio = 'costoso';")
     const resultado = {
         "num_aptos": num_aptos[0][0]["total"],
         "num_postu": num_postu[0][0]["total"],
@@ -112,7 +124,18 @@ async function getMetrics() {
         "aptos_antonio_jose": aptos_antonio_jose[0][0]["total"],
         "aptos_san_bue": aptos_san_bue[0][0]["total"],
         "aptos_libre": aptos_libre[0][0]["total"],
-        "aptos_cooperativa": aptos_cooperativa[0][0]["total"],
+        "promedio_apto": aptos_cooperativa[0][0]["total"],
+        "aptos_cooperativa": promedio_apto[0][0]["total"],
+        "universidad_barata": universidad_barata[0][0],
+        "universidad_cara": universidad_cara[0][0],
+        "post_student": post_student[0][0]["total"],
+        "post_profe": post_profe[0][0]["total"],
+        "postu_barato": postu_barato[0][0]["total"],
+        "postu_medio": postu_medio[0][0]["total"],
+        "postu_caro": postu_caro[0][0]["total"],
+        "habitacion_barato": habitacion_barato[0][0]["total"],
+        "habitacion_medio": habitacion_medio[0][0]["total"],
+        "habitacion_caro": habitacion_caro[0][0]["total"],
     };
 
     return resultado;
