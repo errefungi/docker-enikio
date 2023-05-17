@@ -60,9 +60,9 @@ aptosDF = aptosDF.withColumn("lon", col("coord.y").cast("float"))
 
 # Seleccionar solo las columnas que necesitas
 postulacionesDF = postulacionesDF.select("id_apto", "cc_postulado", "fecha", "ocupacion", "interes", "estado")
-aptosDF = aptosDF.select("id_apto", "precio", "cant_h", "lat", "lon")
-uniDF = uniDF.select("nombre", "lat", "lon")
-# result = postulacionesDF.groupBy("ocupacion").count()
+aptosDF = aptosDF.select("link", "id_apto", "precio", "cant_h", "coord", "hab_disponibles", "id_arrendador", "lat", "lon")
+uniDF = uniDF.select("nombre", "coord","lat", "lon")
+ocupacionCount = postulacionesDF.groupBy("ocupacion").count()
 
 # Comparar la distancia a cada universidad
 for row in uniDF.collect():
@@ -98,7 +98,7 @@ aptosDF = aptosDF.withColumn(
 )
 
 # CREAMOS LAS VISTAS PARA PRECIO DE APTO POR UNIVERSIDAD Y NUM APTOS POR UNIVERSIDAD
-promedio_precio_universidad = aptosDF.groupBy("nearest_university").agg(F.avg("precio").alias("promedio_precio"))
+promedio_precio_universidad = aptosDF.groupBy("nearest_university").agg(F.avg("precio").alias("avg_precio_apto"))
 num_aptos_universidad = aptosDF.groupBy("nearest_university").agg(F.count("id_apto").alias("num_aptos"))
 
 # AÑADIMOS LAS COLUMNAS AL DF DE UNIVERSIDADES
@@ -106,12 +106,12 @@ num_aptos_universidad = aptosDF.groupBy("nearest_university").agg(F.count("id_ap
 universidad_stats = promedio_precio_universidad.join(num_aptos_universidad, "nearest_university")
 uniDF = uniDF.join(universidad_stats, uniDF.nombre == universidad_stats.nearest_university)
 # REDONDEAR EL PRECIO
-uniDF = uniDF.withColumn("promedio_precio", F.round(uniDF.promedio_precio, 1))
+uniDF = uniDF.withColumn("avg_precio_apto", F.round(uniDF.avg_precio_apto, 1))
 
-
-# HALLAR NUMERO DE POSTULACIONES X RANGO DE PRECIO y X UNIVERSIDAD
+# UNIMOS EL DATAFRAME DE APTOS Y EL DE POSTULACIONES
 joinedDF = aptosDF.join(postulacionesDF, aptosDF.id_apto == postulacionesDF.id_apto)
 joinedDF = joinedDF.drop(postulacionesDF.id_apto)
+# HALLAR NUMERO DE POSTULACIONES X RANGO DE PRECIO y X UNIVERSIDAD
 POSTULACIONES_x_PRECIO = joinedDF.groupBy("rango_precio").agg(F.count("id_apto").alias("num_postulaciones_X_precio"))
 POSTULACIONES_x_PRECIO = POSTULACIONES_x_PRECIO.withColumn("num_postulaciones_X_precio", \
                                                            F.round(POSTULACIONES_x_PRECIO.num_postulaciones_X_precio, 1))
@@ -124,24 +124,26 @@ HABITACIONES_x_PRECIO = HABITACIONES_x_PRECIO.withColumn("promedio_habitacion_X_
 HABITACIONES_x_UNIVERSIDAD = aptosDF.groupBy("nearest_university").agg(avg("cant_h").alias("promedio_habitacion_X_universidad"))
 HABITACIONES_x_UNIVERSIDAD = HABITACIONES_x_UNIVERSIDAD.withColumn("promedio_habitacion_X_universidad",\
                                                           F.round(HABITACIONES_x_UNIVERSIDAD.promedio_habitacion_X_universidad, 1))
-# print("Total por ocupación")
-# result.show(10)
-# print("\n"*2)
-# print("Aptos")
-# aptosDF.show(5)
-# print("\n"*2)
-# print("Universidades")
-# uniDF.show()
 
-print("Num postu x RANGO DE PRECIO")
-POSTULACIONES_x_PRECIO.show()
+aptos_precioDF = POSTULACIONES_x_PRECIO.join(HABITACIONES_x_PRECIO, "rango_precio")
+uni_dataDF = POSTULACIONES_x_UNIVERSIDAD.join(HABITACIONES_x_UNIVERSIDAD, "nearest_university")
+uni_dataDF= uni_dataDF.withColumnRenamed("nearest_university", "nombre")
+uniDF = uniDF.join(uni_dataDF, "nombre")
+
+print("Total por ocupación")
+ocupacionCount.show()
+
 print("\n"*2)
-print("Num habitaciones x RANGO DE PRECIO")
-HABITACIONES_x_PRECIO.show()
+print("Universidades")
+uniDF.show()
+
 print("\n"*2)
-print("Num postu x CERCANIA A UNIVERSIDAD")
-POSTULACIONES_x_UNIVERSIDAD.show()
+print("Rangos de precio de aptos")
+aptos_precioDF.show()
+
 print("\n"*2)
-print("Num habitaciones x CERCANIA A UNIVERSIDAD")
-HABITACIONES_x_UNIVERSIDAD.show()
+ocupacionCount.write.csv('./db/data/ocupacionCount.csv', header=True, mode='overwrite')
+uniDF.write.csv('./db/data/universidades.csv', header=True, mode='overwrite')
+aptos_precioDF.write.csv('./db/data/rangosPrecio.csv', header=True, mode='overwrite')
+print("Se escribieron exitosamente los archivos.")
 spark.stop()

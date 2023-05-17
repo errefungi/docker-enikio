@@ -4,7 +4,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cc = $_POST["cc"];
     $nombre = $_POST["nombre"];
     $email = $_POST["email"];
-    $contraseña = $_POST["contraseña"];
+    $password = $_POST["password"];
     $celular = $_POST["celular"];
     $rol = $_POST["rol"];
 

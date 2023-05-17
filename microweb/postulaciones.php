@@ -5,9 +5,10 @@ $us = $_SESSION["usuario"];
 $rol = $_SESSION["rol"];
 $id_apto = $_GET["id_apto"];
 if ($rol == "") {
-	header("Location: index.html");
-	exit;
-    }
+		header("Location: index.html");
+			exit;
+		    }
+header('Content-Type: text/html');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,8 +65,7 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="a
             </tr>
         </thead>
         <tbody>
-	<?php
-	    header('Content-Type: text/html; charset=utf-8');
+<?php
             $servurl = "http://postulaciones:3003/postu/aptos/$id_apto";
             $curl = curl_init($servurl);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
