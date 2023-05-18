@@ -31,8 +31,8 @@ $aptos_cooperativa = $metricsResp->aptos_cooperativa;
 $usuarios = $metricsResp->arrendadores;
 // METRICAS DEL SPARK
 $promedio_apto = $metricsResp-> promedio_apto;
-$universidad_barata = $metricsResp-> universidad_barata;
-$universidad_cara = $metricsResp-> universidad_cara;
+$universidad_barata = $metricsResp-> universidad_barata -> Minimo_Precio_Apto ;
+$universidad_cara = $metricsResp-> universidad_cara -> Minimo_Precio_Apto;
 $post_student = $metricsResp-> post_student;
 $post_profe = $metricsResp-> post_profe;
 
@@ -109,9 +109,9 @@ ob_end_flush();
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div>
-                                <h3 class="fs-2"><?php print_r($universidad_barata -> Minimo_Precio_Apto) ?>$</h3>
-                                <p class="fs-5">Uni Cooperativa</p>
-                                <p class="fs-5">Universidad con el promedio <br> aptos economico</p>
+                                <h3 class="fs-2"><?php print_r(number_format($universidad_barata)) ?> $</h3>
+                                <p class="fs-5"><strong>Universidad Cooperativa</strong></p>
+                                <p class="fs-5">Precio promedio más bajo<br> de aptos</p>
                             </div>
                             <i class="fas fa-mail-bulk fs-1 primary-text border rounded-full secondary-bg p-3"></i>
                         </div>
@@ -120,9 +120,9 @@ ob_end_flush();
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div>
-                                <h3 class="fs-2"><?php print_r($universidad_cara -> Minimo_Precio_Apto) ?>$</h3>
-                                <p class="fs-5">Universidad libre</p>
-                                <p class="fs-5">Universidad con el promedio <br> aptos costoso</p>
+                                <h3 class="fs-2"><?php print_r(number_format($universidad_cara)) ?> $</h3>
+                                <p class="fs-5"><strong>Universidad libre</strong></p>
+                                <p class="fs-5">Precio promedio más alto<br> de aptos</p>
                             </div>
                             <i class="fas fa-check fs-1 primary-text border rounded-full secondary-bg p-3"></i>
                         </div>
@@ -131,7 +131,7 @@ ob_end_flush();
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div>
-                                <h3 class="fs-2"><?php print_r($post_student) ?></h3>
+                                <h3 class="fs-2"><?php print_r(number_format($post_student)) ?></h3>
                                 <p class="fs-5">Postulaciones <br> estudiantes</p>
                             </div>
                             <i class="fas fa-users fs-1 primary-text border rounded-full secondary-bg p-3"></i>
@@ -141,7 +141,7 @@ ob_end_flush();
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div>
-                                <h3 class="fs-2"><?php print_r($post_profe) ?></h3>
+                                <h3 class="fs-2"><?php print_r(number_format($post_profe)) ?></h3>
                                 <p class="fs-5">Postulaciones <br> profesores</p>
                             </div>
                             <i class="fas fa-users fs-1 primary-text border rounded-full secondary-bg p-3"></i>
@@ -151,7 +151,7 @@ ob_end_flush();
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div>
-                                <h3 class="fs-2"><?php print_r($postu_barato) ?></h3>
+                                <h3 class="fs-2"><?php print_r(number_format($postu_barato)) ?></h3>
                                 <p class="fs-5">Postulaciones a aptos<br> economicos</p>
                             </div>
                             <i class="fas fa-users fs-1 primary-text border rounded-full secondary-bg p-3"></i>
@@ -160,7 +160,7 @@ ob_end_flush();
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div>
-                                <h3 class="fs-2"><?php print_r($postu_medio) ?></h3>
+                                <h3 class="fs-2"><?php print_r(number_format($postu_medio)) ?></h3>
                                 <p class="fs-5">Postulaciones a aptos<br> medios</p>
                             </div>
                             <i class="fas fa-users fs-1 primary-text border rounded-full secondary-bg p-3"></i>
@@ -169,7 +169,7 @@ ob_end_flush();
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div>
-                                <h3 class="fs-2"><?php print_r($postu_caro) ?></h3>
+                                <h3 class="fs-2"><?php print_r(number_format($postu_caro)) ?></h3>
                                 <p class="fs-5">Postulaciones a aptos<br> costosos</p>
                             </div>
                             <i class="fas fa-users fs-1 primary-text border rounded-full secondary-bg p-3"></i>
