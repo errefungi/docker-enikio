@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 
-### Clonación del repositorio
+### Clonación del repositorio e instalación de dependencias
 
 2. Clone el repositorio del proyecto Enikio.
 
@@ -50,6 +50,33 @@ header("Location: http://192.168.100.2/admin.php")
 header("Location: http://192.168.100.2/arrendador.php");
 ```
 
+2.2. Instalación de Apache Spark
+
+Instalar Java
+```bash
+$ sudo apt update
+$ sudo apt install -y openjdk-18-jdk
+$ cat <<EOF | sudo tee /etc/profile.d/jdk18.sh
+export JAVA_HOME=/usr/lib/jvm/java-1.18.0-openjdk-amd64
+export PATH=\$PATH:\$JAVA_HOME/bin
+EOF
+```
+----
+```bash
+$ source /etc/profile.d/jdk18.sh
+```
+verificar la instalación obteniendo la versión:
+```bash
+$ java -version
+```
+Descargar y descomprimir Spark
+Tomar la última versión de spark de https://dlcdn.apache.org/spark/
+```bash
+$ mkdir labSpark
+$ cd labSpark/
+$ wget https://dlcdn.apache.org/spark/spark3.4.0/spark-3.4.0-bin-hadoop3.tgz
+$tar -xvzf spark-3.4.0-bin-hadoop3.tgz
+```
 ### Creación de la imagen Docker de MySQL
 
 3. Cree la imagen Docker para MySQL versión 5.7.
