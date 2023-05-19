@@ -100,7 +100,7 @@ sudo docker compose up
 
    i. En su directorio de trabajo, cree un nuevo archivo `.py` y copie el código de la aplicación Spark proporcionado en el repositorio.
 
-   ii. Instale Spark en su máquina y asegúrese de tener instalado también Python y el módulo PySpark.
+   ii. Instale Spark en su máquina.
 
    iii. Ejecute desde el directorio `sbin` los comandos `./start-master.sh` y `./start-worker.sh {ip master spark}` 
 
