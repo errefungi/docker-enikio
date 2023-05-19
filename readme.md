@@ -42,6 +42,13 @@ end
 ```bash
 git clone https://github.com/errefungi/docker-enikio
 ```
+2.1. Cambiar la dirección de ingresar.php por la dirección de la maquina del `Vagrantfile`
+
+```php
+header("Location: http://192.168.100.2/admin.php")
+// Y
+header("Location: http://192.168.100.2/arrendador.php");
+```
 
 ### Creación de la imagen Docker de MySQL
 
