@@ -1,7 +1,7 @@
 version: "3"
 services:
   usuarios:
-    image: usuarios
+    build: ./usuarios
     depends_on:
       - db
     links:
@@ -9,7 +9,7 @@ services:
     ports:
       - "3001:3001"
   aptos:
-    image: aptos
+    build: ./aptos
     depends_on:
       - db
     links:
@@ -17,11 +17,9 @@ services:
     ports:
       - "3002:3002"
   postulaciones:
-    image: postulaciones
+    build: ./postulaciones
     depends_on:
       - db
-      - usuarios
-      - aptos
     links:
       - db
       - usuarios
@@ -29,28 +27,30 @@ services:
     ports:
       - "3003:3003"
   haproxy:
-    image: haproxy
+    build:
+      context: ./haproxy
+      dockerfile: Dockerfile
     depends_on:
       - microweb1
       - microweb2
     ports:
-      - "1080:80"
+      - "80:80"
   microweb1:
-    image: microweb
+    build:
+      context: ./microweb
+      dockerfile: Dockerfile
     depends_on:
       - usuarios
       - aptos
       - postulaciones
-    volumes:
-      - ./microweb:/var/www/html/
   microweb2:
-    image: microweb
+    build:
+      context: ./microweb
+      dockerfile: Dockerfile
     depends_on:
       - usuarios
       - aptos
       - postulaciones
-    volumes:
-      - ./microweb:/var/www/html/
   db:
     image: mysql:5.7
     ports:
@@ -60,4 +60,3 @@ services:
     volumes:
       - "./db/data:/var/lib/mysql-files/"
       - ./db:/docker-entrypoint-initdb.d/:ro
-

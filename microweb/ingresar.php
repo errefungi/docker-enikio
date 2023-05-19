@@ -28,7 +28,7 @@ if (isset($resp) && (is_array($resp) || is_object($resp)) && count($resp) != 0) 
     if ($rol == "arrendador") {
         //header("Access-Control-Allow-Origin: http://192.168.100.9/arrendador.php"); // Reemplaza "http://tu-sitio-web.com" por tu dominio
         //header("Content-Type: application/json");
-	header("Location:arrendador.php");
+	header("Location: http://192.168.100.3/arrendador.php");
 	//echo $rol."hola";
 	//echo '<script type="text/javascript"> window.location = "http://192.168.100.9/arrendador.php" </script>';
 	//echo json_encode(["result" => "arrendador"]);
@@ -38,7 +38,7 @@ if (isset($resp) && (is_array($resp) || is_object($resp)) && count($resp) != 0) 
         //header("Content-Type: application/json");
 	// echo $rol."hola";
 	 //echo '<script type="text/javascript"> window.location = "http://192.168.100.9/admin.php" </script>';
-	header("Location:admin.php");
+	header("Location: http://192.168.100.3/admin.php");
 	//echo json_encode(["result" => "admin"]);
         exit;
     }
